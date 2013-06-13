@@ -1,0 +1,34 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using Amazon;
+using Amazon.EC2;
+using Amazon.EC2.Model;
+
+public partial class _Default : Page
+{
+    //Put your Access key and Secret key in config file
+    AmazonEC2 ec2 = AWSClientFactory.CreateAmazonEC2Client(RegionEndpoint.APSoutheast1);        
+
+    protected void Searchbtn_Click(object sender, EventArgs e)
+    {
+        DescribeImagesRequest imagereq = new DescribeImagesRequest();
+        //architecture 32bit="i386", 64bit="x86_64"
+        //in imageFilter all 32bit Windows that is in marketplace
+        //see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeImages.html for more filtering options.
+        var imageFilter = imagereq.WithFilter(new Filter().WithName("architecture").WithValue("i386").WithName("platform").WithValue(windows)).WithOwner("aws-marketplace");
+        DescribeImagesResponse imageres = ec2.DescribeImages(imageFilter);
+        var LISTAMI = imageres.DescribeImagesResult.Image;
+        LISTAMI = LISTAMI.Where(s => s.Name.ToLower().Contains(TextBox1.Text)).ToList();
+        DescribeImagesResponse imageres = ec2.DescribeImages(imageFilter);
+        var LISTAMI = imageres.DescribeImagesResult.Image;
+        
+        //if still the response you get is too much you can search what you're looking for by searching the results in response
+        //Search by the name of the image you're looking for
+        LISTAMI = LISTAMI.Where(s => s.Name.ToLower().Contains(SearchTxtbox.Text)).ToList();
+       
+    }
+}
