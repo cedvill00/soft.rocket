@@ -36,7 +36,18 @@ public partial class _Default : Page
         }
         #endregion
 
-
+	
+	#region KeyPair List
+	//Existing Keypairs under your amazon account
+	//see http://docs.aws.amazon.com/AWSSdkDocsNET/latest/DeveloperGuide/create-key-pair.html for further details
+	DescribeKeyPairsRequest kpRequest = new DescribeKeyPairsRequest();
+        DescribeKeyPairsResponse kpResponse = ec2.DescribeKeyPairs(kpRequest);
+        List<KeyPair> kpList = kpResponse.DescribeKeyPairsResult.KeyPair;
+        foreach (KeyPair kpitem in kpList)
+        {
+            KeyPairDDL.Items.Add(new ListItem(kpitem.KeyName, kpitem.KeyName));
+        }
+	#endregion
 
         #region SecurityGroup List
 	//Security Group that is created to your account
