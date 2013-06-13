@@ -56,7 +56,7 @@ public partial class _Default : Page
 
 
 
-	     #region Image List
+	#region Image List
 	//Describe images base on your parameter used in filtering
 	//see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeImages.html for further information.
 	//.WithName is the supported filter name and .WithValue is the valid values corresponding to .WithName
@@ -65,8 +65,7 @@ public partial class _Default : Page
         WithName("architecture").WithValue("x86_64").WithName("platform").WithValue("windows").WithName("availability-zone").WithValue("ap-southeast-1a").
         WithName("image-type").WithValue("machine").WithName("root-device-type").WithValue("ebs")).WithOwner("amazon");
         DescribeImagesResponse ec22response = ec2.DescribeImages(ec2ami);
-	      var listOfAMI = ec22response.DescribeImagesResult.Image;
-       
+	var listOfAMI = ec22response.DescribeImagesResult.Image;
         int amiCount;
         amiCount = ec22response.DescribeImagesResult.Image.Count;
         numImageslbl.Text = amiCount.ToString();
