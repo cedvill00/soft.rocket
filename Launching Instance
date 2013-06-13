@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Windows.Forms;
+
+using Amazon;
+using Amazon.EC2;
+using Amazon.EC2.Model;
+using System.Text;
+
+public partial class About : Page
+{
+    AmazonEC2 ec2 = AWSClientFactory.CreateAmazonEC2Client(RegionEndpoint.APSoutheast1);
+
+    protected void Launchbtn_Click(object sender, EventArgs e)
+    {
+          //see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-RunInstances.html 
+          //for further information about run instance
+          RunInstancesRequest ec2Request=new RunInstancesRequest();
+          ec2Request.ImageId="ami-c0c98992";
+          ec2Request.InstanceType="t1.micro";
+          ec2Request.KeyName = "Keypair name"
+          ec2Request.MinCount=1;
+          ec2Request.MaxCount=1;
+          ec2Request.SecurityGroup.Add("Security Group name");  
+        try
+        {
+           RunInstancesResponse ec2Response=ec2.RunInstances(ec2Request);
+           MessageBox.Show("Launched successful...");
+        }
+        catch (AmazonEC2Exception ee)
+        {
+           MessageBox.Show(ee.Message);
+        }
+    }
+}
