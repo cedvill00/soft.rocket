@@ -1,0 +1,76 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Windows.Forms;
+
+using Amazon;
+using Amazon.EC2;
+using Amazon.EC2.Model;
+using System.Text;
+
+public partial class About : Page
+{
+    AmazonEC2 ec2 = AWSClientFactory.CreateAmazonEC2Client(RegionEndpoint.APSoutheast1);
+    //see http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-DescribeInstances.html for further information
+    //Listing the instances bases on their state value
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+        DescribeInstancesRequest ec2Request = new DescribeInstancesRequest();
+        DescribeInstancesResponse ec2Response = ec2.DescribeInstances(ec2Request);
+        var result = ec2.DescribeInstances(ec2Request).DescribeInstancesResult.Reservation;
+        //Get the result from Instance response 
+         if (result != null)
+            {
+                //Get all the instance under your amazon account
+                foreach (Amazon.EC2.Model.Reservation reservation in result)
+                {
+                   
+                    foreach (Amazon.EC2.Model.RunningInstance runningInstance in reservation.RunningInstance)
+                    {
+                        //Every instance that is stopped
+                        if (runningInstance.InstanceState.Name == "stopped")
+                        {
+                            stopDDL.Items.Add(new ListItem(runningInstance.InstanceId, runningInstance.InstanceId));
+                        }
+
+                        //Every instance in running state
+                        if (runningInstance.InstanceState.Name == "running")
+                        {
+                            runDDL.Items.Add(new ListItem(runningInstance.InstanceId, runningInstance.InstanceId));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                DropDownList2.Items.Add(new ListItem("Null", "0"));
+                DropDownList3.Items.Add(new ListItem("Null", "0"));
+            }
+    }
+    
+    //Starting,Stopping,Terminating and Rebooting instance
+    protected void Startbtn_Click(object sender, EventArgs e)
+    {
+        ec2.StartInstances(new StartInstancesRequest().WithInstanceId("My Instance ID"));
+        MessageBox.Show("Start successful...");
+    }
+    protected void Stopbtn_Click(object sender, EventArgs e)
+    {
+        ec2.StopInstances(new StopInstancesRequest().WithInstanceId("My Instance ID"));
+        MessageBox.Show("Stopped successful...");
+    }
+    protected void terminatebtn_Click(object sender, EventArgs e)
+    {
+        ec2.TerminateInstances(new TerminateInstancesRequest().WithInstanceId("My Instance ID"));
+        MessageBox.Show("Termination successful...");
+    }
+    protected void Rebootbtn_Click(object sender, EventArgs e)
+    {
+        ec2.RebootInstances(new RebootInstancesRequest().WithInstanceId("My Instance ID"));
+        MessageBox.Show("Reboot successful...");
+    }
+}
