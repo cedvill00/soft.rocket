@@ -28,7 +28,7 @@ public partial class _Default : Page
         
         //if still the response you get is too much you can search what you're looking for by searching the results in response
         //Search by the name of the image you're looking for
-        LISTAMI = LISTAMI.Where(s => s.Name.ToLower().Contains(SearchTxtbox.Text)).ToList();
+        LISTAMI = LISTAMI.Where(s => s.Name.ToLower().Contains("Search Me")).ToList();
        
     }
 }
