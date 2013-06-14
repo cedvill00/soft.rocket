@@ -28,6 +28,8 @@ namespace softlayer.sample
             //A list of all CloudLayer Computing Instances can be gathered from the SoftLayer_Account service 
             softlayer.sample.account.softlayer.api.SoftLayer_AccountService accService = new softlayer.sample.account.softlayer.api.SoftLayer_AccountService();
             softlayer.sample.account.softlayer.api.authenticate accauthenticate = new softlayer.sample.account.softlayer.api.authenticate();
+            accauthenticate.username = username;
+            accauthenticate.apiKey = apikey;
             //authenticate your Service
             accService.authenticateValue = accauthenticate;
 
