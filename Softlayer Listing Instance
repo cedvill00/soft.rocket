@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Windows.Forms;
+using System.Web.UI.WebControls;
+
+//softlayer.sample is my procjet name
+//vg.softlayer.api is my service reference name 
+//see http://sldn.softlayer.com/article/C-Sharp for adding reference and more...
+using softlayer.sample.vg.softlayer.api;
+using softlayer.sample.account.softlayer.api;
+
+namespace softlayer.sample
+{
+    public partial class _Default : Page
+    {
+        //Generating Your API Key
+        //Log into the SoftLayer customer portal with your customer account master user's username and portal password.
+        //Click the administrative then API Access links.
+        //Select the user you wish to generate a key for and click Generate API Access Key
+        string username = "Softlayer's username";
+        string apikey = "Softlayer's api key";
+          
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            //A list of all CloudLayer Computing Instances can be gathered from the SoftLayer_Account service 
+            softlayer.sample.account.softlayer.api.SoftLayer_AccountService accService = new softlayer.sample.account.softlayer.api.SoftLayer_AccountService();
+            softlayer.sample.account.softlayer.api.authenticate accauthenticate = new softlayer.sample.account.softlayer.api.authenticate();
+            //authenticate your Service
+            accService.authenticateValue = accauthenticate;
+
+            softlayer.sample.account.softlayer.api.SoftLayer_Account allinstance = new softlayer.sample.account.softlayer.api.SoftLayer_Account();
+            //getVirtualGuests method. This method returns an array of SoftLayer_Virtual_Guest data type objects.
+            var list=accService.getVirtualGuests();
+            
+            foreach(softlayer.sample.account.softlayer.api.SoftLayer_Virtual_Guest myitem in list)
+            {
+                //Display Your instance data (domains, ip, id, date verified, cpu info, memory and more...)
+                Display.Text += myitem.hostname + "<br/>";
+
+            }
+        }
