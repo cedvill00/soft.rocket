@@ -1,0 +1,70 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Windows.Forms;
+using System.Web.UI.WebControls;
+
+//softlayer.sample is my procjet name
+//vg.softlayer.api is my service reference name 
+//see http://sldn.softlayer.com/article/C-Sharp for adding reference and more...
+using softlayer.sample.vg.softlayer.api;
+using softlayer.sample.account.softlayer.api;
+
+namespace softlayer.sample
+{
+    public partial class _Default : Page
+    {
+        //Generating Your API Key
+        //Log into the SoftLayer customer portal with your customer account master user's username and portal password.
+        //Click the administrative then API Access links.
+        //Select the user you wish to generate a key for and click Generate API Access Key
+        string username = "Softlayer's username";
+        string apikey = "Softlayer's api key";
+        
+        protected void Create_Click(object sender, EventArgs e)
+        {
+            //authenticate validate your account details apikey and username and other services.
+            softlayer.sample.vg.softlayer.api.authenticate authenticate = new softlayer.sample.vg.softlayer.api.authenticate();
+            authenticate.apiKey = apikey;
+            authenticate.username = username;
+            
+            //The SoftLayer_Virtual_Guest service allows for interaction with a specific CCI 
+            //and you are able to interact with all CCIs on your account through the SoftLayer_Account service.
+            softlayer.sample.vg.softlayer.api.SoftLayer_Virtual_GuestService myservice=new softlayer.sample.vg.softlayer.api.SoftLayer_Virtual_GuestService();
+            myservice.authenticateValue=authenticate;
+            
+            //hostname - Hostname of the new CCI
+            //domain - Domain name of the new CCI
+            //startCpus - Number of processing cores
+            //maxMemory - Memory allocation in MB
+            //hourlyBillingFlag - Set true for hourly billing, false for monthly
+            //operatingSystemReferenceCode - Code to specify which OS to install
+            //localDiskFlag - Setting to true will configure a CCI with local disks, false for SAN disks
+            softlayer.sample.vg.softlayer.api.SoftLayer_Virtual_Guest order=new softlayer.sample.vg.softlayer.api.SoftLayer_Virtual_Guest();
+            order.hostname = "test1";
+            order.domain = "example2.com";
+            order.maxCpu = 1;
+            order.startCpusSpecified = true;
+            order.startCpus = 1;
+            order.maxMemorySpecified = true;
+            order.maxMemory = 1024;
+            order.hourlyBillingFlagSpecified = true;
+            order.hourlyBillingFlag = true;
+            order.localDiskFlagSpecified = true;
+            order.localDiskFlag = true;
+            order.operatingSystemReferenceCode = "UBUNTU_LATEST";
+            try
+            {
+                //The createObject() method incurs charges on the account of your service (Softlayer_Account Service)
+                softlayer.sample.vg.softlayer.api.SoftLayer_Virtual_Guest myorders = (softlayer.sample.vg.softlayer.api.SoftLayer_Virtual_Guest)myservice.createObject(order);
+                MessageBox.Show("Youre Lucky you have successfully created an instance");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error:"+ex.Message);
+            }
+        }
+    }
+}
