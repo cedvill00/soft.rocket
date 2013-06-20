@@ -1,0 +1,61 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Windows.Forms;
+using System.Web.UI.WebControls;
+
+//to add references or info regarding api see: http://sldn.softlayer.com/article/c-sharp
+//add the following services
+using projectname.sl_account.api;
+using projectname.sl_virtualguest.api.
+
+namespace projectname
+{
+    public partial class _Default : Page
+    {
+      
+        string username = "Softlayer's Username";
+        string apikey = "Softlayer's API key";
+         
+        protected void Page_Load(object sender, EventArgs e)
+        {
+                projectname.sl_account.api.SoftLayer_AccountService AccService = new projectname.sl_account.api.SoftLayer_AccountService();
+                projectname.sl_account.api.authenticate AccAuthenticate = new projectname.sl_account.api.authenticate();
+                AccService.authenticateValue = AccAuthenticate;
+                var SLList = AccService.getVirtualGuests();
+
+                projectname.sl_virtualguest.api.SoftLayer_Virtual_GuestService VGService = new projectname.sl_virtualguest.api.SoftLayer_Virtual_GuestService();
+                projectname.sl_virtualguest.api.authenticate VGAuthenticate = new authenticate();
+                VGService.authenticateValue = VGAuthenticate;
+
+                projectname.sl_virtualguest.api.SoftLayer_Virtual_GuestInitParameters test = new projectname.sl_virtualguest.api.SoftLayer_Virtual_GuestInitParameters();
+                foreach (SoftLayer_Virtual_Guest SLitem in SLList)
+                {
+                    test.id = int.Parse(SLitem.id.ToString());
+                    VGService.SoftLayer_Virtual_GuestInitParametersValue = test;
+                    var powerstate = VGService.getPowerState();
+                    var operatingsystem = VGService.getOperatingSystem();
+                }       
+        }
+        protected void ButtonStartStopTerminate_Click(object sender, EventArgs e)
+        {
+                 SoftLayer_Virtual_GuestService VGService = new SoftLayer_Virtual_GuestService();
+                VGService.authenticateValue = authenticate;
+                SoftLayer_Virtual_GuestInitParameters actionState = new SoftLayer_Virtual_GuestInitParameters();
+                actionState.id = 'Instance ID';
+                VGService.SoftLayer_Virtual_GuestInitParametersValue = actionState;
+                
+                //to pause
+                VGService.pause();
+                
+                //to start
+                VGService.resume();
+                
+                //Terminate/Cancel
+                VGService.deleteObject();
+        }
+    }
+}
+        
